@@ -1,0 +1,47 @@
+version: '2'
+
+services:
+  # The Application
+  app:
+    image: hitalos/laravel:latest
+#    build:
+#      context: ./
+#      dockerfile: app.dockerfile
+    volumes:
+      - ../:/var/www
+    ports:
+      - "8084:80"
+    links:
+        - database
+        - cache
+    environment:
+      - "DB_PORT=3306"
+      - "DB_HOST=database"
+      - "REDIS_PORT=6379"
+      - "REDIS_HOST=cache"
+
+  # The Web Server
+  web:
+    build:
+      context: ./
+      dockerfile: web.dockerfile
+    volumes:
+        - ../:/var/www
+    links:
+      - app
+
+  # The Database
+  database:
+    image: mysql:5.7
+    volumes:
+      - ./dbdata:/var/lib/mysql
+    environment:
+      - "MYSQL_DATABASE=antibot_db"
+      - "MYSQL_ROOT_PASSWORD=hardcore"
+    ports:
+        - "33061:3306"
+
+  cache:
+      image: redis:4.0
+      ports:
+          - "63791:6379"
