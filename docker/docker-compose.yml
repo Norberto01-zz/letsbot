@@ -41,6 +41,7 @@ services:
     ports:
         - "33061:3306"
 
+  # Setting up redis
   cache:
       image: redis:4.0
       ports:
